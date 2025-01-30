@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model users {
+  id_users Int    @id @default(autoincrement()) // Primary key
+  username String @unique                      // Unique username
+  password String                              // Password
+  role     String                              // Role
+}
+
+
+model assets {
+  id_assets                   Int      @id @default(autoincrement()) // Primary key
+  name                        String                               // Asset name
+  location                    String                               // Location of the asset
+  category                    String                               // Category of the asset
+  installation_date           DateTime                             // Installation date
+  sub_category                String                               // Sub-category
+  maintenance_frequency_inDays Int                                // Maintenance frequency in days
+  technicalSpecifications     TechnicalSpecifications? @relation(fields: [FK_technical_specifications_id], references: [id_technical_specifications])
+  FK_technical_specifications_id Int?                             // Foreign key linking to TechnicalSpecifications
+
+  // Relations to other tables, if any, will go here in the full schema
+}
+
+
+model technicalSpecifications {
+  id_technical_specifications Int      @id @default(autoincrement()) // Primary key
+  equipment_reference         String                               // Equipment reference
+  manufacturer                String                               // Manufacturer
+  rated_voltage               String                               // Rated voltage
+  rated_current               String                               // Rated current
+  rated_power                 String                               // Rated power
+  frequency                   String                               // Operating frequency
+  speed                       String                               // Speed
+  insulation_class            String                               // Insulation class
+  ingress_protection          String                               // Ingress protection (IP rating)
+  operating_temperature_range String                               // Operating temperature range
+
+  assets                      Assets[]                             // One-to-many relationship (an asset links to this)
+}
+
+
+model maintenanceHistory {
+  id_history            Int      @id @default(autoincrement()) // Primary key 
+  created_at            DateTime @default(now())              // Timestamp of maintenance action
+  type_of_maintenance   String                               // Type of maintenance performed
+  failure_type          String                               // Type of failure encountered
+  corrective_maintenance_type String                         // Type of corrective action performed
+  problem_sign          String                               // Signs of the problem
+  action_performed      String                               // Maintenance actions taken
+  spare_parts           String                               // Spare parts used during maintenance
+  remark                String                               // Remarks about the maintenance action
+  asset                 Assets   @relation(fields: [FK_id_assets], references: [id_assets]) // Link to specific asset
+  user                  Users    @relation(fields: [FK_id_user], references: [id_users])    // Link to the user who performed the maintenance
+  workOrder             WorkOrder @relation(fields: [FK_id_work_order], references: [id_work_order]) // Link to the related work order
+  FK_id_assets          Int                                 // Foreign key for asset
+  FK_id_user            Int                                 // Foreign key for user
+  FK_id_work_order      Int                                 // Foreign key for work order
+}
+
+
+model workOrders {
+  id_work_order Int      @id @default(autoincrement()) // Primary key
+  asset         Assets   @relation(fields: [FK_id_asset], references: [id_assets]) // Link to specific asset
+  user          Users    @relation(fields: [FK_id_user], references: [id_users])  // Link to the assigned user
+  status        String                                // Status of the work order (e.g., "Open", "Completed")
+  start_date    DateTime                              // Start date and time of the work order
+  end_date      DateTime                              // End date and time of the work order
+  created_at    DateTime @default(now())              // Timestamp of when the work order was created
+  FK_id_asset   Int                                   // Foreign key for asset
+  FK_id_user    Int                                   // Foreign key for user
+
+  MaintenanceHistories MaintenanceHistory[]          // Relation to maintenance history (if any)
+}
+
+
+model notifications {
+  id_notifications Int    @id @default(autoincrement()) // Primary key
+  asset            Assets @relation(fields: [FK_id_assets], references: [id_assets]) // Link to specific asset
+  FK_id_assets     Int                                   // Foreign key for asset
+}

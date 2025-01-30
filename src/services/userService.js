@@ -1,5 +1,6 @@
-const prisma = require('../config/db');
+import prisma from "../config/db.js";
 
-exports.getAllUsers = async () => {
-    return await prisma.user.findMany();
+
+export const getAllUsers = async () => {
+    return await prisma.users.findMany();
 };

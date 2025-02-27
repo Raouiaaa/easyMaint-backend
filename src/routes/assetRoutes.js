@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/", addAsset);
 router.get("/", getAllAssets);
-router.put("/update-asset/:id", updateAsset);
+router.put("/:id", updateAsset);
 
 export default router;

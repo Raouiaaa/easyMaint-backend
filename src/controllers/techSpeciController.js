@@ -39,3 +39,12 @@ export const addTechSpeci = async (req, res) => {
     }
 };
 
+// Get all technical specifications
+export const getAllTechSpeci = async (req, res) => {
+    try {
+        const technicalSpecifications = await prisma.technicalSpecifications.findMany();
+        res.json(technicalSpecifications);
+    } catch (err) {
+        console.log(err);
+    }
+};

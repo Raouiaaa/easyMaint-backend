@@ -15,7 +15,7 @@ model users {
   username           String               @unique // Unique username
   password           String // Password
   role               String // Role
-  maintenanceHistory maintenanceHistory[]
+
   workOrders         workOrders[]
 }
 
@@ -34,6 +34,13 @@ model assets {
   maintenanceHistory maintenanceHistory[]
   workOrders         workOrders[]
   notifications      notifications[]
+  scheduledActions   scheduledActions[]
+}
+
+model scheduledActions {
+  id_scheduled_actions   Int    @id @default(autoincrement()) // Primary key
+  asset                  assets?  @relation(fields: [FK_id_assets], references: [id_assets]) // Link to specific asset
+  FK_id_assets           Int //foreign key for asset
 }
 
 model technicalSpecifications {
@@ -57,35 +64,28 @@ model maintenanceHistory {
   created_at                  DateTime   @default(now()) // Timestamp of maintenance action
   type_of_maintenance         String // Type of maintenance performed
   failure_type                String // Type of failure encountered
-  corrective_maintenance_type String // Type of corrective action performed
-  problem_sign                String // Signs of the problem
+  problem_sign                String? // Signs of the problem
   action_performed            String // Maintenance actions taken
-  spare_parts                 String // Spare parts used during maintenance
-  remark                      String // Remarks about the maintenance action
-  asset                       assets     @relation(fields: [FK_id_assets], references: [id_assets]) // Link to specific asset
-  user                        users      @relation(fields: [FK_id_user], references: [id_users]) // Link to the user who performed the maintenance
-  workOrder                   workOrders @relation(fields: [FK_id_work_order], references: [id_work_order]) // Link to the related work order
+  spare_parts                 String? // Spare parts used during maintenance
+  remark                      String? // Remarks about the maintenance action
+  asset                       assets?     @relation(fields: [FK_id_assets], references: [id_assets]) // Link to specific asset
   FK_id_assets                Int // Foreign key for asset
-  FK_id_user                  Int // Foreign key for user
-  FK_id_work_order            Int // Foreign key for work order
 }
 
 model workOrders {
   id_work_order Int      @id @default(autoincrement()) // Primary key
-  asset         assets   @relation(fields: [FK_id_asset], references: [id_assets]) // Link to specific asset
-  user          users    @relation(fields: [FK_id_user], references: [id_users]) // Link to the assigned user
+  asset         assets?   @relation(fields: [FK_id_asset], references: [id_assets]) // Link to specific asset
+  user          users?   @relation(fields: [FK_id_user], references: [id_users]) // Link to the assigned user
   status        String // Status of the work order (e.g., "Open", "Completed")
-  start_date    DateTime // Start date and time of the work order
-  end_date      DateTime // End date and time of the work order
+  start_date    DateTime? // Start date and time of the work order
+  end_date      DateTime? // End date and time of the work order
   created_at    DateTime @default(now()) // Timestamp of when the work order was created
   FK_id_asset   Int // Foreign key for asset
   FK_id_user    Int // Foreign key for user
-
-  maintenanceHistories maintenanceHistory[] // Relation to maintenance history (if any)
 }
 
 model notifications {
   id_notifications Int    @id @default(autoincrement()) // Primary key
-  asset            assets @relation(fields: [FK_id_assets], references: [id_assets]) // Link to specific asset
+  asset            assets? @relation(fields: [FK_id_assets], references: [id_assets]) // Link to specific asset
   FK_id_assets     Int // Foreign key for asset
 }

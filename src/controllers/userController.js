@@ -1,4 +1,4 @@
-import {getAllUsers} from "../services/userService.js";
+import {getAllUsers, getUserByUsername} from "../services/userService.js";
 import prisma from "../config/db.js";
 
 export const getAllUsersFromDB = async (req, res) => {
@@ -29,9 +29,7 @@ export const addUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const foundUser = await prisma.users.findUnique({
-            where: { username },
-        });
+        const foundUser = await getUserByUsername(username);
     
         if (foundUser && foundUser.password === password) {
             res.json({

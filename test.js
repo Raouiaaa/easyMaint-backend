@@ -137,106 +137,106 @@ app.use(bodyParser.json());
 // });
 
 // Create a new technical specification
-app.post("/technical-specifications", async (req, res) => {
-    const {
-        equipmentReference,
-        manufacturer,
-        ratedVoltage,
-        ratedCurrent,
-        ratedPower,
-        frequency,
-        speed,
-        insulationClass,
-        ingressProtection,
-        operatingTemperatureRange,
-    } = req.body;
+// app.post("/technical-specifications", async (req, res) => {
+//     const {
+//         equipmentReference,
+//         manufacturer,
+//         ratedVoltage,
+//         ratedCurrent,
+//         ratedPower,
+//         frequency,
+//         speed,
+//         insulationClass,
+//         ingressProtection,
+//         operatingTemperatureRange,
+//     } = req.body;
 
-    const newTechnicalSpecification = await prisma.technicalSpecifications.create({
-        data: {
-            equipment_reference: equipmentReference,
-            manufacturer,
-            rated_voltage: ratedVoltage,
-            rated_current: ratedCurrent,
-            rated_power: ratedPower,
-            frequency,
-            speed,
-            insulation_class: insulationClass,
-            ingress_protection: ingressProtection,
-            operating_temperature_range: operatingTemperatureRange,
-        },
-    });
+//     const newTechnicalSpecification = await prisma.technicalSpecifications.create({
+//         data: {
+//             equipment_reference: equipmentReference,
+//             manufacturer,
+//             rated_voltage: ratedVoltage,
+//             rated_current: ratedCurrent,
+//             rated_power: ratedPower,
+//             frequency,
+//             speed,
+//             insulation_class: insulationClass,
+//             ingress_protection: ingressProtection,
+//             operating_temperature_range: operatingTemperatureRange,
+//         },
+//     });
 
-    res.json({
-        id: newTechnicalSpecification.id_technical_specifications,
-        equipmentReference: newTechnicalSpecification.equipment_reference,
-    });
-});
+//     res.json({
+//         id: newTechnicalSpecification.id_technical_specifications,
+//         equipmentReference: newTechnicalSpecification.equipment_reference,
+//     });
+// });
 
 // Get all technical specifications
-app.get("/technical-specifications", async (req, res) => {
-    const technicalSpecifications = await prisma.technicalSpecifications.findMany();
-    res.json(technicalSpecifications);
-});
+// app.get("/technical-specifications", async (req, res) => {
+//     const technicalSpecifications = await prisma.technicalSpecifications.findMany();
+//     res.json(technicalSpecifications);
+// });
 
-// Create a work order
-app.post("/work-orders", async (req, res) => {
-    const { idAsset, idUser, status, startDate, endDate } = req.body;
+// // Create a work order
+// app.post("/work-orders", async (req, res) => {
+//     const { idAsset, idUser, status, startDate, endDate } = req.body;
 
-    const newWorkOrder = await prisma.workOrders.create({
-        data: {
-            asset: { connect: { id_assets: idAsset } },
-            user: { connect: { id_users: idUser } },
-            status,
-            start_date: new Date(startDate),
-            end_date: new Date(endDate),
-        },
-    });
+//     const newWorkOrder = await prisma.workOrders.create({
+//         data: {
+//             asset: { connect: { id_assets: idAsset } },
+//             user: { connect: { id_users: idUser } },
+//             status,
+//             start_date: new Date(startDate),
+//             end_date: new Date(endDate),
+//         },
+//     });
 
-    res.json({
-        id: newWorkOrder.id_work_order,
-        status: newWorkOrder.status,
-    });
-});
+//     res.json({
+//         id: newWorkOrder.id_work_order,
+//         status: newWorkOrder.status,
+//     });
+// });
 
 // Get all work orders
-app.get("/work-orders", async (req, res) => {
-    const workOrders = await prisma.workOrders.findMany({
-        include: { asset: true, user: true },
-    });
+// app.get("/work-orders", async (req, res) => {
+//     const workOrders = await prisma.workOrders.findMany({
+//         include: { asset: true, user: true },
+//     });
 
-    const simplifiedWorkOrders = workOrders.map(({ id_work_order, FK_id_asset, status }) => ({
-        id: id_work_order,
-        FKidAsset: FK_id_asset,
-        status,
-    }));
-    res.json({ workOrders: simplifiedWorkOrders });
-});
+//     const simplifiedWorkOrders = workOrders.map(({ id_work_order, FK_id_asset, status }) => ({
+//         id: id_work_order,
+//         FKidAsset: FK_id_asset,
+//         status,
+//     }));
+//     res.json({ workOrders: simplifiedWorkOrders });
+// });
 
-// Create a notification
-app.post("/notifications", async (req, res) => {
-    const { idAsset, message } = req.body;
+// // Create a notification
+// app.post("/notifications", async (req, res) => {
+//     const { idAsset, message } = req.body;
 
-    const newNotification = await prisma.notifications.create({
-        data: {
-            asset: { connect: { id_assets: idAsset } },
-            message,
-        },
-    });
+//     const newNotification = await prisma.notifications.create({
+//         data: {
+//             asset: { connect: { id_assets: idAsset } },
+//             message,
+//         },
+//     });
 
-    res.json({
-        id: newNotification.id_notifications,
-        idAsset: newNotification.FK_id_assets,
-        message: newNotification.message,
-    });
-});
+//     res.json({
+//         id: newNotification.id_notifications,
+//         idAsset: newNotification.FK_id_assets,
+//         message: newNotification.message,
+//     });
+// });
 
-// Get all notifications
-app.get("/notifications", async (req, res) => {
-    const notifications = await prisma.notifications.findMany({
-        include: { asset: true },
-    });
-    res.json(notifications);
-});
+// // Get all notifications
+// app.get("/notifications", async (req, res) => {
+//     const notifications = await prisma.notifications.findMany({
+//         include: { asset: true },
+//     });
+//     res.json(notifications);
+// });
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

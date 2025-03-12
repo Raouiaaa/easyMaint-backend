@@ -25,10 +25,12 @@ model assets {
   location                       String // Location of the asset
   category                       String // Category of the asset
   installation_date              Int // Installation date
-  sub_category                   String // Sub-category
   maintenance_frequency_inDays   Int // Maintenance frequency in days
   technicalSpecifications        technicalSpecifications? @relation(fields: [FK_technical_specifications_id], references: [id_technical_specifications])
   FK_technical_specifications_id Int? // Foreign key linking to TechnicalSpecifications
+
+  FK_subCategory_id  Int?          // Foreign key
+  subCategory    subCategory?  @relation(fields: [FK_subCategory_id], references: [id_sub]) // Relationship
 
   // Relations to other tables, if any, will go here in the full schema
   maintenanceHistory maintenanceHistory[]
@@ -37,10 +39,32 @@ model assets {
   scheduledActions   scheduledActions[]
 }
 
+model subCategory {
+  id_sub           Int                  @id @default(autoincrement()) // Primary key
+  name             String               
+
+  assets           assets[]   // One-to-many relationship (One subCategory has many assets)
+  actions          actions[] // one subcategory has many actions 
+  scheduledActions   scheduledActions[]
+}
+
+model actions {
+  id_actions           Int                  @id @default(autoincrement()) // Primary key
+  description          String        
+  FK_subcategory_id  Int          // Foreign key
+  subCategory    subCategory  @relation(fields: [FK_subcategory_id], references: [id_sub]) // Relationship       
+}
+
+
 model scheduledActions {
   id_scheduled_actions   Int    @id @default(autoincrement()) // Primary key
-  asset                  assets?  @relation(fields: [FK_id_assets], references: [id_assets]) // Link to specific asset
-  FK_id_assets           Int //foreign key for asset
+  FK_asset_id                   Int //foreign key for asset
+  asset                  assets?  @relation(fields: [FK_asset_id], references: [id_assets]) // Link to specific asset
+  
+  FK_id_sub              Int //foreign key for subcategory
+  subCategory            subCategory?  @relation(fields: [FK_id_sub], references: [id_sub])
+
+  dynamicDate            DateTime  
 }
 
 model technicalSpecifications {

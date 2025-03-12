@@ -6,9 +6,9 @@ import techSpeciRoutes from "./routes/techSpeciRoutes.js";
 import workOrderRoutes from "./routes/workOrderRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import maintHistoryRoutes from "./routes/maintHistoryRoutes.js" ;
-import testworkRoutes from "./routes/testworkRoutes.js";
-// const assetRoutes = require('./routes/assetRoutes');
-// const workOrderRoutes = require('./routes/workOrderRoutes');
+import scheduledActionsRoutes from "./routes/scheduledActionsRoutes.js";
+
+
 import cors from "cors";
 
 dotenv.config();
@@ -28,7 +28,7 @@ app.use('/api/technical-specifications', techSpeciRoutes);
 app.use('/api/workorders', workOrderRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/maintenance-history', maintHistoryRoutes);
-app.use('/api/test-workorder', testworkRoutes);
+app.use('/api/scheduled-actions', scheduledActionsRoutes);
 
 
 app.listen(PORT, () => {

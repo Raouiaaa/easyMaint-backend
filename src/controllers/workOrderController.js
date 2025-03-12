@@ -33,7 +33,7 @@ export const getAllWorkOrders = async (req, res) => {
 
         const simplifiedWorkOrders = workOrders.map(({ id_work_order, FK_id_asset, status }) => ({
             id: id_work_order,
-            FKidAsset: FK_id_asset,
+            // FKidAsset: FK_id_asset,
             status,
         }));
         res.json({ workOrders: simplifiedWorkOrders });
@@ -42,3 +42,28 @@ export const getAllWorkOrders = async (req, res) => {
     }
 };
 
+// Get overdue work orders
+export const getOverdueWorkOrders = async (req, res) => {
+    try {
+        const workOrders = await prisma.workOrders.findMany();
+
+        // Filtrer les ordres de travail en retard (plus de 3 heures)
+        const overdueWorkOrders = workOrders.filter((order) => {
+                const currentDate = new Date();
+                const createdAtDate = new Date(order.created_at);
+                const differenceInHours = (currentDate - createdAtDate) / (1000 * 60 * 60);
+                return differenceInHours > 3 && order.status.toLowerCase() === "open" && order.start_date === null;
+            });
+
+        // Envoyer la réponse avec les ordres en retard
+        const simplifiedOverdueWorkOrders = overdueWorkOrders.map(({ id_work_order, status }) => ({
+            id: id_work_order,
+            status,
+        }));
+        res.json({overdueWorkOrders: simplifiedOverdueWorkOrders});
+        
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: err.message });
+    }
+};

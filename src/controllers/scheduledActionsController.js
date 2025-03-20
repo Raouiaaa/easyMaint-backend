@@ -1,21 +1,17 @@
-import prisma from "../config/db.js";
+import { getActions } from "../services/actionService.js";
+import { getScheduledActions } from "../services/scheduledActionsService.js";
 
 
 // get all scheduled actions  
 export const getAllScheduledActions = async (req, res) => {
     try {
-        const scheduledActions = await prisma.scheduledActions.findMany({
-            include: { asset: true, subCategory: true },
-        });
+        const scheduledActions = await getScheduledActions();
+        const actions = await getActions();
 
-        const actions = await prisma.actions.findMany({
-            include: {subCategory: true },
-        });
-
-        const formattedScheduledActions = scheduledActions.map((action) => {
-            const baseDate = new Date(action.dynamicDate);
+        const listOfScheduledActions = scheduledActions.map((action) => {
             const assetName = action.asset?.name;
             const IDsubCategory = action.asset?.FK_subCategory_id;
+            const date = action.dynamicDate;
 
             // Getting descriptions of actions related to a specific subCategory
             const descriptionsOfActions = actions
@@ -24,25 +20,16 @@ export const getAllScheduledActions = async (req, res) => {
 
             return {
                 reference : assetName,
-                date: baseDate.toISOString().split('T')[0], // Format to YYYY-MM-DD
+                date: date.toISOString().split('T')[0], // Format to YYYY-MM-DD
                 descriptionsOfActions : descriptionsOfActions
             };
         });
 
 
         // const formattedScheduledActions = scheduledActions.map((action) => {
-        //     const baseDate = new Date(action.dynamicDate);
-        //     const maintenanceFrequency = action.asset?.maintenance_frequency_inDays || 0;
         //     const assetName = action.asset?.name;
         //     const IDsubCategory = action.asset?.FK_subCategory_id;
 
-        //     // Function to calculate future maintenance dates
-        //     const futureDates = [];
-        //     for (let i = 1; i <= 5; i++) { // Store the next 5 maintenance dates
-        //         const nextDate = new Date(baseDate);
-        //         nextDate.setDate(baseDate.getDate() + i * maintenanceFrequency);
-        //         futureDates.push(nextDate.toISOString().split('T')[0]); // Store as YYYY-MM-DD
-        //     }
 
         //     // Getting descriptions of actions related to a specific subCategory
         //     const descriptionsOfActions = actions
@@ -50,15 +37,13 @@ export const getAllScheduledActions = async (req, res) => {
         //         .map((item) => item.description); // Extract only descriptions
 
         //     return {
-        //         // ...action,
         //         assetName : assetName,
-        //         dynamicDate: baseDate.toISOString().split('T')[0], // Format to YYYY-MM-DD
-        //         // futureMaintenanceDates: futureDates, // Store next maintenance dates
+        //         Date: baseDate.toISOString().split('T')[0], // Format to YYYY-MM-DD
         //         descriptionsOfActions : descriptionsOfActions
         //     };
         // });
 
-        res.json({ scheduledActions: formattedScheduledActions });
+        return res.json(listOfScheduledActions);
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: "Server Error" });

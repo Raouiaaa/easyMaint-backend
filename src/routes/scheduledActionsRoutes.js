@@ -4,7 +4,6 @@ import {getAllScheduledActions} from "../controllers/scheduledActionsController.
 
 const router = express.Router();
 
-// router.post("/", addScheduledActions);
 router.get("/", getAllScheduledActions);
 
 export default router;

@@ -1,11 +1,11 @@
 import express from "express";
-import {addAsset, getAllAssets, updateAsset} from "../controllers/assetController.js";
+import {createAsset, getAllAssets, updateAssets} from "../controllers/assetController.js";
 
 
 const router = express.Router();
 
-router.post("/", addAsset);
+router.post("/", createAsset);
 router.get("/", getAllAssets);
-router.put("/:id", updateAsset);
+router.put("/:id", updateAssets);
 
 export default router;

@@ -112,4 +112,5 @@ model notifications {
   id_notifications Int    @id @default(autoincrement()) // Primary key
   asset            assets? @relation(fields: [FK_id_assets], references: [id_assets]) // Link to specific asset
   FK_id_assets     Int // Foreign key for asset
+  message          String
 }

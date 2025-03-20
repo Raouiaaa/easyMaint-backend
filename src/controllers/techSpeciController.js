@@ -1,50 +1,14 @@
-import prisma from "../config/db.js";
+import {getTechSpeci} from "../services/techSpeciService.js";
 
-export const addTechSpeci = async (req, res) => {
-    try {
-        const {
-            equipmentReference,
-            manufacturer,
-            ratedVoltage,
-            ratedCurrent,
-            ratedPower,
-            frequency,
-            speed,
-            insulationClass,
-            ingressProtection,
-            operatingTemperatureRange,
-        } = req.body;
-    
-        const newTechnicalSpecification = await prisma.technicalSpecifications.create({
-            data: {
-                equipment_reference: equipmentReference,
-                manufacturer,
-                rated_voltage: ratedVoltage,
-                rated_current: ratedCurrent,
-                rated_power: ratedPower,
-                frequency,
-                speed,
-                insulation_class: insulationClass,
-                ingress_protection: ingressProtection,
-                operating_temperature_range: operatingTemperatureRange,
-            },
-        });
-    
-        res.json({
-            id: newTechnicalSpecification.id_technical_specifications,
-            equipmentReference: newTechnicalSpecification.equipment_reference,
-        });
-    } catch (err) {
-        console.log(err);
-    }
-};
 
 // Get all technical specifications
 export const getAllTechSpeci = async (req, res) => {
     try {
-        const technicalSpecifications = await prisma.technicalSpecifications.findMany();
-        res.json(technicalSpecifications);
+        const techSpecifications = await getTechSpeci();
+        return res.json(techSpecifications);
+
     } catch (err) {
-        console.log(err);
+        console.error("Error fetching technical specifications:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 };
